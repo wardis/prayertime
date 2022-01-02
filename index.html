@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prayer Time</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <div id="header">
+          <p class="date-header"><span>Today</span> <span id="date"></span></p>
+          <div class="location">
+            <img src="location.png" alt="location icon" />
+            <h1 id="cityName">St Helens</h1>
+          </div>
+        </div>
+        <p id="timings-header"><span>Salat</span><span>Begins</span></p>
+        <ul id="timings"></ul>
+      </div>
+    </div>
+    <script>
+      const cityNameEl = document.getElementById('cityName');
+      const cityName = cityNameEl.innerText;
+
+      const url = `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(
+        cityName
+      )}&country=United%20Kingdom&method=3`;
+      console.log(url);
+
+      fetch(url)
+        .then((res) => res.json())
+        .then((json) => {
+          console.log(json.data);
+          renderTimings(json.data);
+        });
+
+      function renderTimings({ date, timings }) {
+        const timingsEl = document.getElementById('timings');
+        const dateEl = document.getElementById('date');
+
+        dateEl.innerText = date.readable;
+
+        const times = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+        const listItems = times.map((time) => {
+          const li = document.createElement('li');
+          li.setAttribute('id', time);
+          li.innerHTML = `<span class='prayer-name'>🕒 ${time}</span><span class='prayer-time'>${timings[time]}</span>`;
+          timingsEl.appendChild(li);
+        });
+      }
+    </script>
+  </body>
+</html>
